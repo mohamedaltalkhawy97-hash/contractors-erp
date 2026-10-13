@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% block content %}<h1>المستخدمون والصلاحيات</h1>
+{% for e in errors %}<div class="msg err">{{ e }}</div>{% endfor %}
+<form method="post" class="card"><input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="action" value="create"><b>مستخدم جديد</b><div class="row">
+<label>اسم المستخدم<input name="username" required></label><label>الاسم<input name="full_name"></label><label>كلمة المرور (8+)<input type="password" name="password" required></label>
+<label>الصلاحية<select name="role">{% for k,v in roles.items() %}<option value="{{ k }}">{{ v }}</option>{% endfor %}</select></label><button>إضافة</button></div></form>
+<div class="tablewrap"><table><tr><th>المستخدم</th><th>الاسم</th><th>الصلاحية</th><th>الحالة</th><th>إجراءات</th></tr>
+{% for u in users %}<tr><td>{{ u.username }}</td><td>{{ u.full_name }}</td><td>{{ roles[u.role] }}</td><td>{{ 'نشط' if u.is_active else 'موقوف' }}</td><td>{% if u.id!=user.id %}
+<form method="post" style="display:inline"><input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="user_id" value="{{ u.id }}"><button name="action" value="toggle" class="btn sec">{{ 'إيقاف' if u.is_active else 'تفعيل' }}</button></form>
+<form method="post" style="display:inline"><input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="user_id" value="{{ u.id }}"><input type="hidden" name="action" value="role"><select name="role" onchange="this.form.submit()">{% for k,v in roles.items() %}<option value="{{ k }}" {% if k==u.role %}selected{% endif %}>{{ v }}</option>{% endfor %}</select></form>{% endif %}
+<form method="post" style="display:inline"><input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="user_id" value="{{ u.id }}"><input type="hidden" name="action" value="reset"><input type="password" name="password" placeholder="كلمة مرور جديدة" size="14"><button class="btn sec">تغيير</button></form></td></tr>{% endfor %}</table></div>{% endblock %}

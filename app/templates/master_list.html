@@ -1,0 +1,7 @@
+{% extends "base.html" %}{% block content %}<h1>{{ cfg.title }}</h1>
+<form class="row noprint" method="get"><label>بحث<input name="q" value="{{ q }}"></label><button>بحث</button>{% if can_write %}<a class="btn ok right" href="/m/{{ key }}/new">+ إضافة</a>{% endif %}</form>
+<div class="tablewrap"><table><tr>{% for c in cfg.cols %}<th>{{ c[1] }}</th>{% endfor %}<th>نشط</th><th></th></tr>
+{% for o in items %}<tr {% if o.level is defined and o.level<3 %}class="group"{% endif %}>
+{% for c in cfg.cols %}<td {% if c|length>2 and c[2]=='money' %}class="num"{% endif %}>
+{% if c|length>2 and c[2]=='rel' %}{{ o.customer.name if o.customer else '' }}{% elif c|length>2 and c[2]=='money' %}{{ o[c[0]]|money }}{% else %}{{ o[c[0]] if o[c[0]] is defined else '' }}{% endif %}</td>{% endfor %}
+<td>{{ '✓' if o.active else '✕' }}</td><td><a href="/m/{{ key }}/{{ o.id }}">{{ 'تعديل' if can_write else 'عرض' }}</a></td></tr>{% else %}<tr><td colspan="9">لا توجد بيانات</td></tr>{% endfor %}</table></div>{% endblock %}

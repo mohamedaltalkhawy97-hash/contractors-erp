@@ -1,0 +1,8 @@
+{% extends "base.html" %}{% block content %}<h1>لوحة التحكم</h1>
+<p class="hint">الفترة: <bdi>{{ start|dstr }}</bdi> إلى <bdi>{{ end|dstr }}</bdi> (من بداية السنة المالية حتى اليوم) - تعتمد على القيود المرحّلة فقط</p>
+<div class="kpis">{% for k,v in kpis %}<div class="kpi"><small>{{ k }}</small><div class="num">{{ v|money }}</div></div>{% endfor %}</div>
+<div class="card"><b>حالة ميزان المراجعة:</b> <span class="bal {{ 'ok' if tot.balanced else 'err' }}">{{ '✓ متوازن' if tot.balanced else '✕ غير متوازن - راجع القيود' }}</span>
+ &nbsp; القيود المرحّلة: {{ counts.entries }} &nbsp; المسودات: {{ counts.drafts }} {% if counts.drafts %}<a href="/journal?status=draft">(عرض)</a>{% endif %}
+ &nbsp; العملاء: {{ counts.customers }} &nbsp; الموردون: {{ counts.suppliers }} &nbsp; المشاريع الجارية: {{ counts.projects }}</div>
+<div class="card"><b>اختصارات:</b> {% if can_write %}<a class="btn" href="/journal/new">+ قيد يومية</a> <a class="btn sec" href="/m/projects/new">+ مشروع</a> <a class="btn sec" href="/m/customers/new">+ عميل</a> <a class="btn sec" href="/m/suppliers/new">+ مورد</a>{% endif %}
+ <a class="btn sec" href="/reports/trial-balance">ميزان المراجعة</a></div>{% endblock %}

@@ -1,0 +1,13 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block title %}نظام المقاولات{% endblock %}</title><link rel="stylesheet" href="/static/style.css"></head><body>
+<div class="top"><b>{{ user.company.name if user else 'نظام المقاولات ERP' }}</b>
+{% if user %}<span>{{ user.full_name or user.username }} ({{ roles[user.role] }})
+<form method="post" action="/logout"><input type="hidden" name="csrf" value="{{ csrf }}"><button class="btn sec" style="padding:4px 12px">خروج</button></form></span>{% endif %}</div>
+<div class="layout">{% if user %}<nav class="side">
+<a href="/">🏠 الرئيسية</a><h4>البيانات الأساسية</h4>
+<a href="/m/accounts">دليل الحسابات</a><a href="/m/customers">العملاء</a><a href="/m/suppliers">الموردون والمقاولون</a><a href="/m/projects">المشاريع</a><a href="/m/cost-centers">مراكز التكلفة</a>
+<h4>المحاسبة</h4><a href="/journal">القيود اليومية</a>{% if can_write %}<a href="/journal/new">+ قيد جديد</a>{% endif %}
+<h4>التقارير</h4><a href="/reports/trial-balance">ميزان المراجعة</a><a href="/reports/ledger">الأستاذ العام</a>
+{% if user.role=='admin' %}<h4>الإدارة</h4><a href="/admin/users">المستخدمون</a><a href="/admin/settings">إعدادات الشركة</a><a href="/admin/audit">سجل العمليات</a>{% endif %}
+</nav>{% endif %}<main>{% if flash %}<div class="msg {{ flash.kind }}">{{ flash.msg }}</div>{% endif %}{% block content %}{% endblock %}</main></div>
+<script src="/static/app.js"></script></body></html>

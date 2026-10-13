@@ -1,0 +1,16 @@
+{% extends "base.html" %}{% block content %}<h1>{{ 'تعديل مسودة قيد ' ~ number if entry else 'قيد يومية جديد' }}</h1>
+{% for e in errors %}<div class="msg err">{{ e }}</div>{% endfor %}
+{% macro opts(items, sel, kind) %}<option value="">--</option>{% for x in items %}<option value="{{ x.id }}" {% if sel|string==x.id|string %}selected{% endif %}>{% if kind=='a' %}{{ x.code }} - {{ x.name }}{% else %}{{ x.code }} - {{ x.name }}{% endif %}</option>{% endfor %}{% endmacro %}
+{% macro row(l) %}<tr class="line"><td><select name="account_id" style="min-width:230px">{{ opts(accounts, l[0], 'a') }}</select></td>
+<td><input name="debit" value="{{ l[1] if l[1] not in ('0.00','0') else '' }}" size="12" class="num"></td><td><input name="credit" value="{{ l[2] if l[2] not in ('0.00','0') else '' }}" size="12" class="num"></td>
+<td><input name="line_desc" value="{{ l[3] }}"></td><td><select name="project_id">{{ opts(projects, l[4], 'p') }}</select></td><td><select name="cc_id">{{ opts(ccs, l[5], 'c') }}</select></td><td><button type="button" class="btn red del" style="padding:2px 8px">×</button></td></tr>{% endmacro %}
+<form method="post" class="card"><input type="hidden" name="csrf" value="{{ csrf }}">
+<div class="row"><label>رقم القيد<input value="{{ number }}" readonly size="10"></label><label>التاريخ<input type="date" name="date" value="{{ date|dstr }}" required></label>
+<label style="flex:1">البيان<input name="description" value="{{ desc }}" style="width:100%"></label><label>المرجع<input name="reference" value="{{ ref }}"></label></div>
+<div class="tablewrap"><table><thead><tr><th>الحساب</th><th>مدين</th><th>دائن</th><th>بيان السطر</th><th>المشروع</th><th>مركز التكلفة</th><th></th></tr></thead>
+<tbody id="lines">{% set fl = form_lines if form_lines is defined and form_lines else [] %}{% for l in fl %}{{ row(l) }}{% endfor %}{% if not fl %}{{ row(('','','','','','')) }}{{ row(('','','','','','')) }}{% endif %}</tbody>
+<tfoot><tr><td><b>الإجمالي</b></td><td class="num" id="td">0.00</td><td class="num" id="tc">0.00</td><td colspan="4"><span id="bal" class="bal err">✕</span></td></tr></tfoot></table></div>
+<template id="rowtpl">{{ row(('','','','','','')) }}</template>
+<p><button type="button" class="btn sec" onclick="addLine()">+ إضافة سطر</button></p>
+<p><button name="action" value="save">حفظ كمسودة</button> <button name="action" value="post" class="btn ok">حفظ وترحيل</button> <a class="btn sec" href="/journal">إلغاء</a></p>
+<p class="hint">لا يُرحَّل القيد إلا إذا كان متوازناً ومستوفياً: الحسابات الرئيسية لا تقبل حركة، والحسابات التي تتطلب مشروعاً/مركز تكلفة يجب تحديدها، والتاريخ داخل السنة المالية.</p></form>{% endblock %}

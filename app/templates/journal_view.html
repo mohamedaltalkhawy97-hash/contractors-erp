@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% block content %}<h1>قيد {{ e.number }} <span class="badge {{ 'b-ok' if e.status=='posted' else 'b-warn' }}">{{ 'مرحّل' if e.status=='posted' else 'مسودة' }}</span></h1>
+<div class="card"><b>التاريخ:</b> {{ e.date|dstr }} &nbsp; <b>البيان:</b> {{ e.description }} &nbsp; <b>المرجع:</b> {{ e.reference }}
+{% if e.reversal_of_id %}&nbsp; <a href="/journal/{{ e.reversal_of_id }}">القيد الأصلي</a>{% endif %}{% if rev %}&nbsp; <span class="badge b-warn">تم عكسه بالقيد <a href="/journal/{{ rev.id }}">{{ rev.number }}</a></span>{% endif %}</div>
+{% for x in errs %}<div class="msg err">{{ x }}</div>{% endfor %}
+<div class="tablewrap"><table><tr><th>الحساب</th><th>البيان</th><th>المشروع</th><th>مركز التكلفة</th><th>مدين</th><th>دائن</th></tr>
+{% for l in e.lines %}<tr><td>{{ l.account.code }} - {{ l.account.name }}</td><td>{{ l.description }}</td><td>{{ l.project.code if l.project else '' }}</td><td>{{ l.cost_center.code if l.cost_center else '' }}</td><td class="num">{{ l.debit|money }}</td><td class="num">{{ l.credit|money }}</td></tr>{% endfor %}
+<tr class="group"><td colspan="4">الإجمالي</td><td class="num">{{ e.total_debit|money }}</td><td class="num">{{ e.total_credit|money }}</td></tr></table></div>
+<p class="noprint">{% if can_write %}
+{% if e.status=='draft' %}<a class="btn" href="/journal/{{ e.id }}/edit">تعديل</a>
+<form method="post" action="/journal/{{ e.id }}/post" style="display:inline"><input type="hidden" name="csrf" value="{{ csrf }}"><button class="btn ok">ترحيل</button></form>
+<form method="post" action="/journal/{{ e.id }}/delete" style="display:inline" onsubmit="return confirm('حذف المسودة؟')"><input type="hidden" name="csrf" value="{{ csrf }}"><button class="btn red">حذف</button></form>
+{% elif not rev and not e.reversal_of_id %}<form method="post" action="/journal/{{ e.id }}/reverse" style="display:inline" onsubmit="return confirm('إنشاء قيد عكسي مرحّل؟')"><input type="hidden" name="csrf" value="{{ csrf }}"><input type="date" name="date" value="{{ e.date|dstr }}"> <button class="btn red">عكس القيد</button></form>{% endif %}{% endif %}
+<a class="btn sec" href="/journal">رجوع</a> <button class="btn sec" onclick="window.print()">طباعة</button></p>{% endblock %}

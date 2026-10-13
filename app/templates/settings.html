@@ -1,0 +1,6 @@
+{% extends "base.html" %}{% block content %}<h1>إعدادات الشركة</h1>{% for e in errors %}<div class="msg err">{{ e }}</div>{% endfor %}
+<form method="post" class="card"><input type="hidden" name="csrf" value="{{ csrf }}"><div class="formgrid">
+<label>اسم الشركة *<input name="name" value="{{ user.company.name }}" required></label><label>النشاط<input name="activity" value="{{ user.company.activity }}"></label>
+<label>العنوان<input name="address" value="{{ user.company.address }}"></label><label>الهاتف<input name="phone" value="{{ user.company.phone }}"></label>
+<label>الرقم الضريبي<input name="tax_no" value="{{ user.company.tax_no }}"></label><label>العملة<input name="currency" value="{{ user.company.currency }}"></label>
+<label>بداية السنة المالية *<input type="date" name="fy_start" value="{{ user.company.fy_start|dstr }}" required></label></div><p><button>حفظ</button></p></form>{% endblock %}

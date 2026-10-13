@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% block content %}<h1>الأستاذ العام</h1>
+<form class="row noprint" method="get"><label>الحساب<select name="account"><option value="">-- اختر --</option>{% for a in accounts %}<option value="{{ a.id }}" {% if acc and acc.id==a.id %}selected{% endif %}>{{ a.code }} - {{ a.name }}</option>{% endfor %}</select></label>
+<label>من<input type="date" name="start" value="{{ start|dstr }}"></label><label>إلى<input type="date" name="end" value="{{ end|dstr }}"></label><button>عرض</button></form>
+{% if acc %}<p><b>{{ acc.code }} - {{ acc.name }}</b> {% if acc.level<3 %}<span class="hint">(حساب رئيسي: يشمل حساباته الفرعية)</span>{% endif %}</p>
+<div class="tablewrap"><table><tr><th>التاريخ</th><th>رقم القيد</th><th>الحساب</th><th>البيان</th><th>المشروع</th><th>مدين</th><th>دائن</th><th>الرصيد</th></tr>
+<tr class="group"><td colspan="7">رصيد أول الفترة</td><td class="num">{{ opening|money }}</td></tr>
+{% for r in rows %}<tr><td>{{ r.entry.date|dstr }}</td><td><a href="/journal/{{ r.entry.id }}">{{ r.entry.number }}</a></td><td>{{ r.line.account.code }}</td><td>{{ r.line.description or r.entry.description }}</td><td>{{ r.line.project.code if r.line.project else '' }}</td>
+<td class="num">{{ r.line.debit|money }}</td><td class="num">{{ r.line.credit|money }}</td><td class="num">{{ r.balance|money }}</td></tr>{% endfor %}
+<tr class="group"><td colspan="7">رصيد آخر الفترة (مدين + / دائن -)</td><td class="num">{{ closing|money }}</td></tr></table></div>{% endif %}{% endblock %}

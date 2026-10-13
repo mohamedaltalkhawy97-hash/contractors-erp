@@ -1,0 +1,12 @@
+{% extends "base.html" %}{% block content %}<h1>{{ cfg.title }} - {{ 'تعديل' if obj else 'إضافة' }}</h1>
+{% for e in errors %}<div class="msg err">{{ e }}</div>{% endfor %}
+<form method="post" class="card"><input type="hidden" name="csrf" value="{{ csrf }}"><div class="formgrid">
+{% for f,ch in fields %}{% set v = vals.get(f.name) %}
+<label>{{ f.label }}{% if f.req %} *{% endif %}
+{% if f.kind=='check' %}<input type="checkbox" name="{{ f.name }}" {% if v in (True,'on') %}checked{% endif %}>
+{% elif f.kind=='select' %}<select name="{{ f.name }}" {% if not can_write %}disabled{% endif %}><option value="">-- اختر --</option>{% for val,lab in ch %}<option value="{{ val }}" {% if v is not none and v|string==val|string %}selected{% endif %}>{{ lab }}</option>{% endfor %}</select>
+{% elif f.kind=='textarea' %}<textarea name="{{ f.name }}" rows="3">{{ v or '' }}</textarea>
+{% elif f.kind=='date' %}<input type="date" name="{{ f.name }}" value="{{ v|dstr if v and v is not string else (v or '') }}">
+{% else %}<input name="{{ f.name }}" value="{{ v if v is not none else '' }}" {% if f.create_only and obj %}readonly{% endif %}>{% endif %}
+{% if f.hint %}<span class="hint">{{ f.hint }}</span>{% endif %}</label>{% endfor %}</div>
+<p>{% if can_write %}<button>حفظ</button> {% endif %}<a class="btn sec" href="/m/{{ key }}">رجوع</a></p></form>{% endblock %}

@@ -1,0 +1,5 @@
+{% extends "base.html" %}{% block content %}<div class="login card"><h1>تسجيل الدخول</h1>
+{% if error %}<div class="msg err">{{ error }}</div>{% endif %}
+<form method="post" action="/login"><div class="formgrid" style="grid-template-columns:1fr">
+<label>اسم المستخدم<input name="username" required autofocus></label><label>كلمة المرور<input type="password" name="password" required></label>
+<button>دخول</button></div></form></div>{% endblock %}

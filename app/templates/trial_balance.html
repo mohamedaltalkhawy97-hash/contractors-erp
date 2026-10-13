@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% block content %}<h1>ميزان المراجعة</h1>
+<form class="row noprint" method="get"><label>من<input type="date" name="start" value="{{ start|dstr }}"></label><label>إلى<input type="date" name="end" value="{{ end|dstr }}"></label>
+<label><span>حسابات الحركة فقط</span><input type="checkbox" name="hide_groups" value="1" {% if hide_groups %}checked{% endif %}></label><button>عرض</button><button type="button" class="btn sec" onclick="window.print()">طباعة</button></form>
+<p><span class="bal {{ 'ok' if tot.balanced else 'err' }}">{{ '✓ الميزان متوازن' if tot.balanced else '✕ الميزان غير متوازن' }}</span> <span class="hint">القيود المرحّلة فقط</span></p>
+<div class="tablewrap"><table><tr><th>الكود</th><th>اسم الحساب</th><th>أول الفترة مدين</th><th>أول الفترة دائن</th><th>حركة مدين</th><th>حركة دائن</th><th>آخر الفترة مدين</th><th>آخر الفترة دائن</th></tr>
+{% for r in rows %}<tr {% if r.level<3 %}class="group"{% endif %}><td><a href="/reports/ledger?account={{ r.account.id }}&start={{ start|dstr }}&end={{ end|dstr }}">{{ r.code }}</a></td><td style="padding-right:{{ (r.level-1)*14 }}px">{{ r.account.name }}</td>
+<td class="num">{{ r.opening|money if r.opening>0 else '-' }}</td><td class="num">{{ (-r.opening)|money if r.opening<0 else '-' }}</td><td class="num">{{ r.debit|money }}</td><td class="num">{{ r.credit|money }}</td>
+<td class="num">{{ r.closing|money if r.closing>0 else '-' }}</td><td class="num">{{ (-r.closing)|money if r.closing<0 else '-' }}</td></tr>{% endfor %}
+<tr class="group"><td colspan="2">الإجمالي (حسابات الحركة)</td><td class="num">{{ tot.open_dr|money }}</td><td class="num">{{ tot.open_cr|money }}</td><td class="num">{{ tot.debit|money }}</td><td class="num">{{ tot.credit|money }}</td><td class="num">{{ tot.close_dr|money }}</td><td class="num">{{ tot.close_cr|money }}</td></tr></table></div>{% endblock %}

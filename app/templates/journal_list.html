@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% block content %}<h1>القيود اليومية</h1>
+<form class="row noprint" method="get"><label>بحث<input name="q" value="{{ q }}"></label>
+<label>الحالة<select name="status"><option value="">الكل</option><option value="draft" {% if status=='draft' %}selected{% endif %}>مسودة</option><option value="posted" {% if status=='posted' %}selected{% endif %}>مرحّل</option></select></label>
+<label>من<input type="date" name="start" value="{{ start }}"></label><label>إلى<input type="date" name="end" value="{{ end }}"></label><button>تصفية</button>
+{% if can_write %}<a class="btn ok right" href="/journal/new">+ قيد جديد</a>{% endif %}</form>
+<div class="tablewrap"><table><tr><th>الرقم</th><th>التاريخ</th><th>البيان</th><th>المرجع</th><th>مدين</th><th>دائن</th><th>الحالة</th></tr>
+{% for e in items %}<tr><td><a href="/journal/{{ e.id }}">{{ e.number }}</a></td><td>{{ e.date|dstr }}</td><td>{{ e.description }}</td><td>{{ e.reference }}</td>
+<td class="num">{{ e.total_debit|money }}</td><td class="num">{{ e.total_credit|money }}</td>
+<td><span class="badge {{ 'b-ok' if e.status=='posted' else 'b-warn' }}">{{ 'مرحّل' if e.status=='posted' else 'مسودة' }}</span></td></tr>{% else %}<tr><td colspan="7">لا توجد قيود</td></tr>{% endfor %}</table></div>{% endblock %}
