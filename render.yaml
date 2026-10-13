@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: contractors-erp
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /healthz
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.3
+      - key: DATABASE_URL
+        sync: false          # الصق هنا رابط Neon
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ADMIN_PASSWORD
+        sync: false          # كلمة مرور المدير الأولى
+      - key: COMPANY_NAME
+        value: اسم شركتك
+      - key: SESSION_HTTPS_ONLY
+        value: "1"
+      - key: LOAD_DEMO
+        value: "0"
